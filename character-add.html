@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Character</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Navbar styling */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      background-color: #f8f8f8;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ccc;
+      align-items: center;
+    }
+
+    .navbar button {
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .navbar button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Main layout for image and details */
+    .content {
+      display: flex;
+      flex: 1;
+      padding: 20px;
+    }
+
+    .character-image img {
+      max-width: 300px;
+      height: auto;
+      display: block;
+      margin-right: 20px;
+    }
+
+    .details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .details label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .details div {
+      margin-bottom: 15px;
+    }
+
+    .details input {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    .edit-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .edit-actions button {
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+      margin-left: 10px;
+    }
+
+    .edit-actions button.cancel {
+      background-color: #dc3545;
+    }
+
+    .edit-actions button:hover {
+      background-color: #0056b3;
+    }
+
+    .edit-actions button.cancel:hover {
+      background-color: #c82333;
+    }
+  </style>
+
+</head>
+<body>
+  <div class="navbar">
+    <button onclick="window.close()">Close</button>
+    <button id="save-btn" onclick="saveCharacter()">Save</button>
+  </div>
+
+  <div class="content">
+    <div class="details">
+      <div>
+        <label for="character-name">Name:</label>
+        <input id="character-name" type="text" />
+      </div>
+      <div>
+        <label for="character-path">Image Path:</label>
+        <input id="character-path" type="text" />
+      </div>
+      <div>
+        <label for="character-html">HTML Code:</label>
+        <textarea id="character-html"></textarea>
+      </div>
+      <div>
+        <label for="character-tags">Tags:</label>
+        <input id="character-tags" type="text" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function saveCharacter() {
+      const name = document.getElementById('character-name').value;
+      const path = document.getElementById('character-path').value;
+      const html = document.getElementById('character-html').value;
+      const tags = document.getElementById('character-tags').value.split(',');
+
+      // Save character to Firebase
+      const dbRef = firebase.database().ref('characters/');
+      const newCharacterRef = dbRef.push();
+      newCharacterRef.set({
+        name,
+        path,
+        html,
+        tags,
+      });
+
+      alert('Character added successfully!');
+      window.close();
+    }
+  </script>
+</body>
+</html>

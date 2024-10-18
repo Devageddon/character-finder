@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Navbar styling */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      background-color: #f8f8f8;
+      padding: 10px 20px;
+      border-bottom: 1px solid #ccc;
+      align-items: center;
+    }
+
+    .navbar button {
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .navbar button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Main layout for image and details */
+    .content {
+      display: flex;
+      flex: 1;
+      padding: 20px;
+    }
+
+    .character-image img {
+      max-width: 300px;
+      height: auto;
+      display: block;
+      margin-right: 20px;
+    }
+
+    .details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .details label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .details div {
+      margin-bottom: 15px;
+    }
+
+    .details input {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    .edit-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .edit-actions button {
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+      margin-left: 10px;
+    }
+
+    .edit-actions button.cancel {
+      background-color: #dc3545;
+    }
+
+    .edit-actions button:hover {
+      background-color: #0056b3;
+    }
+
+    .edit-actions button.cancel:hover {
+      background-color: #c82333;
+    }
+  </style>
+
+</head>
+<body>
+  <div class="navbar">
+    <button onclick="window.close()">Close</button>
+    <button id="edit-btn" onclick="toggleEdit()">Edit</button>
+  </div>
+
+  <div class="content">
+    <div class="character-image">
+      <img id="character-image" src="" alt="Character Image" />
+    </div>
+
+    <div class="details">
+      <div>
+        <label for="character-name">Name:</label>
+        <input id="character-name" type="text" disabled />
+      </div>
+      <div>
+        <label for="character-path">Image Path:</label>
+        <input id="character-path" type="text" disabled />
+      </div>
+      <div>
+        <label for="character-html">HTML Code:</label>
+        <textarea id="character-html" disabled></textarea>
+      </div>
+      <div>
+        <label for="character-tags">Tags:</label>
+        <input id="character-tags" type="text" disabled />
+      </div>
+
+      <div id="edit-actions" style="display: none;">
+        <button onclick="cancelEdit()">Cancel</button>
+        <button onclick="saveDetails()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let character = { name: '', path: '', html: '', tags: '' };
+
+    function loadCharacterDetails() {
+      const params = new URLSearchParams(window.location.search);
+      const name = params.get('name');
+      const path = params.get('path');
+      const tags = params.get('tags');
+      
+      document.getElementById('character-name').value = name;
+      document.getElementById('character-path').value = path;
+      document.getElementById('character-html').value = html;
+      document.getElementById('character-tags').value = tags;
+    }
+
+    function toggleEdit() {
+      const editable = document.getElementById('character-name').disabled;
+      document.getElementById('character-name').disabled = !editable;
+      document.getElementById('character-path').disabled = !editable;
+      document.getElementById('character-html').disabled = !editable;
+      document.getElementById('character-tags').disabled = !editable;
+      document.getElementById('edit-actions').style.display = editable ? 'flex' : 'none';
+    }
+
+    function cancelEdit() {
+      loadCharacterDetails();
+      toggleEdit();
+    }
+
+    function saveDetails() {
+      character.name = document.getElementById('character-name').value;
+      character.path = document.getElementById('character-path').value;
+      character.html = document.getElementById('character-html').value;
+      character.tags = document.getElementById('character-tags').value.split(',');
+
+      const dbRef = firebase.database().ref('characters/');
+      dbRef.child(character.id).update(character);
+      toggleEdit();
+    }
+
+    window.onload = loadCharacterDetails;
+  </script>
+</body>
+</html>
